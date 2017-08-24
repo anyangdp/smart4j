@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smart4j.chapter1.util.CollectionUtil;
 import org.smart4j.chapter1.util.PropsUtil;
+import org.smart4j.chapter1.util.StringUtil;
 
+import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -60,21 +62,21 @@ public class DatabaseHelper {
     }
 
     /**
-     * 关闭数据库连接
+     * 关闭数据库连接,使用了dbcp连接池，不用手动关闭
      */
-    public static void closeConnection() {
-        Connection conn = CONNECTION_HOLDER.get();
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                logger.error("close connection failure", e);
-                throw new RuntimeException(e);
-            } finally {
-                CONNECTION_HOLDER.remove();
-            }
-        }
-    }
+//    public static void closeConnection() {
+//        Connection conn = CONNECTION_HOLDER.get();
+//        if (conn != null) {
+//            try {
+//                conn.close();
+//            } catch (SQLException e) {
+//                logger.error("close connection failure", e);
+//                throw new RuntimeException(e);
+//            } finally {
+//                CONNECTION_HOLDER.remove();
+//            }
+//        }
+//    }
 
     /**
      * 查询实体类列表
@@ -229,5 +231,22 @@ public class DatabaseHelper {
      */
     private static <T> String getTableName(Class<T> entityClass) {
         return entityClass.getSimpleName().toUpperCase();
+    }
+
+    public static void executeSqlFile(String filePath) {
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
+        try {
+            String sql;
+            while (!StringUtil.isEmpty(sql = bufferedReader.readLine())) {
+                if (!sql.substring(0, 1).equals("#") && !sql.substring(0, 1).equals("--")) {
+                    executeUpdate(sql);
+                }
+            }
+        } catch (IOException e) {
+            logger.error("execute sql file failure", e);
+            throw new RuntimeException(e);
+        }
     }
 }

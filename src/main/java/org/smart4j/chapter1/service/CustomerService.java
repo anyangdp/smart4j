@@ -73,14 +73,14 @@ public class CustomerService {
     }
 
     public boolean createCustomer(Map<String,Object> filedMap) {
-        return false;
+        return DatabaseHelper.insertEntity(Customer.class, filedMap);
     }
 
     public boolean updateCustomer(long id, Map<String,Object> filedMap) {
-        return false;
+        return DatabaseHelper.updateEntity(Customer.class, id, filedMap);
     }
 
     public boolean deleteCustomer(long id) {
-        return false;
+        return DatabaseHelper.deleteEntity(Customer.class, id);
     }
 }

@@ -3,6 +3,7 @@ package org.smart4j.chapter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.smart4j.chapter1.helper.DatabaseHelper;
 import org.smart4j.chapter1.model.Customer;
 import org.smart4j.chapter1.service.CustomerService;
 
@@ -20,6 +21,7 @@ public class CustomerServiceTest {
     @Before
     public void init() {
         //初始化数据库
+        DatabaseHelper.executeSqlFile("sql/customer_init.sql");
     }
 
     @Test
